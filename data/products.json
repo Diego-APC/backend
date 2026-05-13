@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "name": "Cemento Gris 42.5 kg",
+    "price": 12500,
+    "category": "Cemento, cal y yeso",
+    "subcategory": "Cemento",
+    "image": "https://example.com/cemento.jpg",
+    "description": "Ideal para hormigón armado. Resistencia óptima para construcciones estructurales.",
+    "stock": 100,
+    "createdAt": "2026-05-13T03:34:31.990Z",
+    "updatedAt": "2026-05-13T03:34:31.990Z"
+  },
+  {
+    "id": 2,
+    "name": "Ladrillo Hueco 12x18x33",
+    "price": 850,
+    "category": "Bloques y ladrillos",
+    "subcategory": "Ladrillos",
+    "image": "https://example.com/ladrillo.jpg",
+    "description": "Ladrillo cerámico hueco para paredes interiores y exteriores.",
+    "stock": 5000,
+    "createdAt": "2026-05-13T03:34:31.990Z",
+    "updatedAt": "2026-05-13T03:34:31.990Z"
+  },
+  {
+    "id": 3,
+    "name": "Hierro del 12 mm x 12 m",
+    "price": 4500,
+    "category": "Hierro y acero",
+    "subcategory": "Barras",
+    "image": "https://example.com/hierro.jpg",
+    "description": "Barra de acero corrugado para estructuras de hormigón.",
+    "stock": 200,
+    "createdAt": "2026-05-13T03:34:31.990Z",
+    "updatedAt": "2026-05-13T03:34:31.990Z"
+  },
+  {
+    "id": 4,
+    "name": "Pintura Látex Blanca x 20 L",
+    "price": 35000,
+    "category": "Pinturas",
+    "subcategory": "Látex",
+    "image": "https://example.com/pintura.jpg",
+    "description": "Pintura látex para interiores y exteriores. Excelente cobertura.",
+    "stock": 50,
+    "createdAt": "2026-05-13T03:34:31.990Z",
+    "updatedAt": "2026-05-13T03:34:31.990Z"
+  },
+  {
+    "id": 5,
+    "name": "Cable Eléctrico 2.5 mm x 100 m",
+    "price": 12000,
+    "category": "Electricidad",
+    "subcategory": "Cables",
+    "image": "https://example.com/cable.jpg",
+    "description": "Cable unipolar para instalaciones eléctricas domiciliarias.",
+    "stock": 150,
+    "createdAt": "2026-05-13T03:34:31.990Z",
+    "updatedAt": "2026-05-13T03:34:31.990Z"
+  }
+]

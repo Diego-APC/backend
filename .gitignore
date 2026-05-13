@@ -1,0 +1,127 @@
+# Dependencias
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Bases de datos SQLite
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+materiales.db
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# Archivos de datos JSON (opcional, si quieres ignorar los JSON antiguos)
+data/*.json
+!data/.gitkeep
+
+# Variables de entorno
+.env
+.env.local
+.env.production
+.env.development
+.env.test
+
+# Archivos de log
+logs/
+*.log
+log.txt
+
+# Directorios de sistema operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Archivos de editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.~*
+*.sublime-*
+.project
+.classpath
+
+# Archivos de cobertura de pruebas
+coverage/
+.nyc_output/
+*.lcov
+
+# Archivos de construcción
+dist/
+build/
+out/
+
+# Archivos de backup
+*.bak
+*.backup
+*.old
+*.orig
+
+# Archivos de configuración local
+config.local.js
+config.local.json
+
+# Archivos temporales
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Archivos de error
+npm-err.log
+error.log
+
+# Archivos de entorno de desarrollo
+.env.*.local
+.env.*.local.*
+*.env.local
+*.env.development.local
+*.env.test.local
+*.env.production.local
+
+# Archivos de certificados
+*.pem
+*.key
+*.crt
+*.cert
+
+# Archivos de depuración
+debug.log
+dev.log
+
+# Archivos de datos de usuario
+data/users.backup.json
+data/products.backup.json
+
+# Archivos de migraciones (si usas migraciones)
+migrations/*.sql
+!migrations/.gitkeep
+
+# Archivos de seeds (datos de ejemplo, pero mantener seed.js)
+seed-data/
+!seed.js
+
+# Archivos de documentación generada
+docs/generated/
+apidoc/
+
+# Archivos de sistema
+*.pid
+*.seed
+*.pid.lock
+
+# Archivos de memoria
+*.heapdump
+*.v8.log

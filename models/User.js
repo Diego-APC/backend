@@ -1,145 +1,107 @@
-const fs = require('fs').promises;
-const path = require('path');
+const { getDatabase } = require('../config/database');
 const bcrypt = require('bcryptjs');
 
-const DATA_FILE = path.join(__dirname, '../data/users.json');
-
 class User {
-  constructor(id, nombre, descripcion, rol, password) {
-    this.id = id;
-    this.nombre = nombre;
-    this.descripcion = descripcion;
-    this.rol = rol; // 'admin' o 'user'
-    this.password = password;
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
-  }
-
-  // Asegurar que el archivo de datos existe
-  static async ensureDataFile() {
-    try {
-      await fs.access(DATA_FILE);
-    } catch (error) {
-      await fs.writeFile(DATA_FILE, JSON.stringify([], null, 2));
-    }
-  }
-
-  // Leer todos los usuarios
+  // Obtener todos los usuarios (sin passwords)
   static async findAll() {
-    await this.ensureDataFile();
-    const data = await fs.readFile(DATA_FILE, 'utf8');
-    const users = JSON.parse(data);
-    // Ocultar contraseñas al enviar al cliente
-    return users.map(user => {
-      const { password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
-    });
+    const db = await getDatabase();
+    const users = await db.all(`
+      SELECT id, name, email, description, role, avatar, created_at, updated_at 
+      FROM users 
+      ORDER BY id
+    `);
+    return users;
   }
 
-  // Buscar usuario por ID
+  // Obtener usuario por ID
   static async findById(id) {
-    const users = await this.findAllFull();
-    const user = users.find(u => u.id === parseInt(id));
-    if (!user) return null;
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    const db = await getDatabase();
+    const user = await db.get(`
+      SELECT id, name, email, description, role, avatar, created_at, updated_at 
+      FROM users 
+      WHERE id = ?
+    `, [id]);
+    return user;
   }
 
-  // Buscar usuario completo (con contraseña)
-  static async findAllFull() {
-    await this.ensureDataFile();
-    const data = await fs.readFile(DATA_FILE, 'utf8');
-    return JSON.parse(data);
-  }
-
-  // Buscar por nombre
-  static async findByNombre(nombre) {
-    const users = await this.findAllFull();
-    return users.find(u => u.nombre === nombre);
+  // Obtener usuario por email (con password para autenticación)
+  static async findByEmail(email) {
+    const db = await getDatabase();
+    const user = await db.get(`
+      SELECT * FROM users WHERE email = ?
+    `, [email]);
+    return user;
   }
 
   // Crear nuevo usuario
   static async create(userData) {
-    const users = await this.findAllFull();
+    const db = await getDatabase();
     
-    // Verificar si el usuario ya existe
-    const existingUser = await this.findByNombre(userData.nombre);
+    // Verificar si el email ya existe
+    const existingUser = await this.findByEmail(userData.email);
     if (existingUser) {
-      throw new Error('El nombre de usuario ya existe');
+      throw new Error('El email ya está registrado');
     }
-
-    // Encriptar contraseña
+    
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     
-    const newUser = {
-      id: users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1,
-      nombre: userData.nombre,
-      descripcion: userData.descripcion,
-      rol: userData.rol || 'user',
-      password: hashedPassword,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    users.push(newUser);
-    await fs.writeFile(DATA_FILE, JSON.stringify(users, null, 2));
+    const result = await db.run(`
+      INSERT INTO users (name, email, password, description, role, avatar)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `, [
+      userData.name,
+      userData.email,
+      hashedPassword,
+      userData.description || '',
+      userData.role || 'user',
+      userData.avatar || '👤'
+    ]);
     
-    const { password, ...userWithoutPassword } = newUser;
-    return userWithoutPassword;
+    // Obtener el usuario creado
+    const newUser = await this.findById(result.lastID);
+    return newUser;
   }
 
   // Actualizar usuario
   static async update(id, userData) {
-    const users = await this.findAllFull();
-    const userIndex = users.findIndex(u => u.id === parseInt(id));
+    const db = await getDatabase();
     
-    if (userIndex === -1) {
-      throw new Error('Usuario no encontrado');
-    }
-
-    // Si se actualiza la contraseña, encriptarla
-    if (userData.password) {
-      userData.password = await bcrypt.hash(userData.password, 10);
-    }
-
-    users[userIndex] = {
-      ...users[userIndex],
-      nombre: userData.nombre || users[userIndex].nombre,
-      descripcion: userData.descripcion || users[userIndex].descripcion,
-      rol: userData.rol || users[userIndex].rol,
-      password: userData.password || users[userIndex].password,
-      updatedAt: new Date()
-    };
-
-    await fs.writeFile(DATA_FILE, JSON.stringify(users, null, 2));
+    const updates = [];
+    const values = [];
     
-    const { password, ...userWithoutPassword } = users[userIndex];
-    return userWithoutPassword;
+    if (userData.name !== undefined) {
+      updates.push('name = ?');
+      values.push(userData.name);
+    }
+    if (userData.description !== undefined) {
+      updates.push('description = ?');
+      values.push(userData.description);
+    }
+    if (userData.avatar !== undefined) {
+      updates.push('avatar = ?');
+      values.push(userData.avatar);
+    }
+    
+    if (updates.length === 0) {
+      throw new Error('No hay datos para actualizar');
+    }
+    
+    updates.push('updated_at = CURRENT_TIMESTAMP');
+    values.push(id);
+    
+    await db.run(`
+      UPDATE users 
+      SET ${updates.join(', ')} 
+      WHERE id = ?
+    `, values);
+    
+    const updatedUser = await this.findById(id);
+    return updatedUser;
   }
 
-  // Eliminar usuario
-  static async delete(id) {
-    const users = await this.findAllFull();
-    const filteredUsers = users.filter(u => u.id !== parseInt(id));
-    
-    if (filteredUsers.length === users.length) {
-      throw new Error('Usuario no encontrado');
-    }
-    
-    await fs.writeFile(DATA_FILE, JSON.stringify(filteredUsers, null, 2));
-    return true;
-  }
-
-  // Verificar credenciales
-  static async authenticate(nombre, password) {
-    const user = await this.findByNombre(nombre);
-    if (!user) return null;
-    
-    const isValid = await bcrypt.compare(password, user.password);
-    if (!isValid) return null;
-    
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+  // Verificar contraseña
+  static async verifyPassword(user, password) {
+    return await bcrypt.compare(password, user.password);
   }
 }
 

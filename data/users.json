@@ -1,20 +1,13 @@
 [
   {
     "id": 1,
-    "nombre": "admin",
-    "descripcion": "Administrador del sistema",
-    "rol": "admin",
-    "password": "$2a$10$N9qo8uLOickgx2ZMRZoMy.Mr/.tY5Yq4ZfZtG6tZ5ZdVxZxZxZxZx",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "updatedAt": "2024-01-01T00:00:00.000Z"
-  },
-  {
-    "id": 2,
-    "nombre": "testuser",
-    "descripcion": "Usuario de prueba",
-    "rol": "user",
-    "password": "$2a$10$stQ3FjIimxsG7AGy3Vn7c.dgUb3/GXd8JJo79rtEbm8jrXsNoAZIu",
-    "createdAt": "2026-05-07T15:59:42.142Z",
-    "updatedAt": "2026-05-07T15:59:42.142Z"
+    "name": "Admin",
+    "email": "admin@elcimiento.com",
+    "description": "Administrador del sistema",
+    "role": "admin",
+    "avatar": "👷",
+    "password": "$2a$10$zy4jHUOVEE6jyScrU4kf3.znZgF9gcw42D20rtzMT1FLCnRLEGAeS",
+    "createdAt": "2026-05-13T03:34:31.975Z",
+    "updatedAt": "2026-05-13T03:34:31.975Z"
   }
 ]
