@@ -4,33 +4,30 @@ class Product {
   // Obtener todos los productos con filtros
   static async findAll(filters = {}) {
     const db = await getDatabase();
-    
-    let query = 'SELECT * FROM products WHERE 1=1';
-    const params = [];
-    
+
+    // ⚠️ VULNERABLE A SQL INJECTION — laboratorio educativo
+    let query = `SELECT * FROM products WHERE 1=1`;
+
     if (filters.category) {
-      query += ' AND category = ?';
-      params.push(filters.category);
+      query += ` AND category = '${filters.category}'`;
     }
-    
+
     if (filters.search) {
-      query += ' AND (name LIKE ? OR description LIKE ?)';
-      params.push(`%${filters.search}%`, `%${filters.search}%`);
+      // ❌ VULNERABLE — concatenación directa sin sanitizar
+      query += ` AND name LIKE '%${filters.search}%'`;
     }
-    
+
     if (filters.minPrice) {
-      query += ' AND price >= ?';
-      params.push(parseFloat(filters.minPrice));
+      query += ` AND price >= ${filters.minPrice}`;
     }
-    
+
     if (filters.maxPrice) {
-      query += ' AND price <= ?';
-      params.push(parseFloat(filters.maxPrice));
+      query += ` AND price <= ${filters.maxPrice}`;
     }
-    
-    query += ' ORDER BY id';
-    
-    const products = await db.all(query, params);
+
+    query += ` ORDER BY id`;
+
+    const products = await db.all(query);
     return products;
   }
 

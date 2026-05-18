@@ -7,16 +7,17 @@ const { authenticateToken, authorizeRoles } = require('../middleware/auth');
 router.get('/', async (req, res) => {
   try {
     const { category, search, minPrice, maxPrice } = req.query;
-    
+
     const filters = {};
     if (category) filters.category = category;
-    if (search) filters.search = search;
+    if (search) filters.search = search;       // sin sanitizar
     if (minPrice) filters.minPrice = minPrice;
     if (maxPrice) filters.maxPrice = maxPrice;
-    
+
     const products = await Product.findAll(filters);
     res.json(products);
   } catch (error) {
+    // ⚠️ Exponer el error ayuda al estudiante a confirmar la inyección
     res.status(500).json({ error: error.message });
   }
 });
